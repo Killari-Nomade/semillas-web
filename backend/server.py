@@ -7,7 +7,7 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
-from typing import List, Optional
+from typing import List, Optional, Literal
 from datetime import datetime, timezone, timedelta
 import uuid
 import bcrypt
@@ -121,7 +121,7 @@ class CustomOrder(BaseModel):
 
 
 class StatusUpdate(BaseModel):
-    status: str
+    status: Literal['nuevo', 'contactado', 'cotizado', 'en_proceso', 'completado', 'cancelado']
 
 
 class Order(BaseModel):

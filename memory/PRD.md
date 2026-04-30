@@ -22,6 +22,22 @@ User requested e-commerce online store. Brand name "Semillas Nómadas" (chosen b
 - Panel admin protegido (JWT)
 - WhatsApp flotante para contacto rápido
 
+## Implemented (Feb 2026 – iter 2: Custom Orders módulo premium)
+- ✅ `/personalizada` con hero, "Cómo funciona" (3 pasos) y formulario completo (tipo joya, presupuesto, descripción del elemento, inspiración URL, fecha deseada)
+- ✅ Backend: POST público, GET/PATCH admin (con validación `Literal` de estados)
+- ✅ Admin dashboard: tercer tab "Personalizadas" con cambio de estado inline (nuevo → contactado → cotizado → en_proceso → completado → cancelado)
+- ✅ Stat card extra en admin: total + nuevas
+- ✅ CTA destacado en Home con fondo verde bosque
+- ✅ Link "Personalizada" en navegación
+
+## Brand messaging refinado (iter 2)
+- ✅ Home: nueva sección "Nuestros materiales — Madera que ya tiene historia" con chips (Pino, Olivo, Ciprés, Nogal, Otras recuperadas)
+- ✅ Home value cards actualizados: "Naturaleza reutilizada" + "Recogido con cariño"
+- ✅ Story page: sustentabilidad detallada con menciones específicas a pino/olivo/ciprés/nogal
+- ✅ Footer tagline actualizado
+- ✅ Productos sample actualizados (Anillo Bosque Eterno → madera de pino; Aretes Corteza → madera de olivo)
+- ✅ 24/24 tests backend + frontend E2E 100%
+
 ## Implemented (Feb 2026 – iter 1)
 - ✅ Landing/Home con hero, valores, productos destacados, story teaser
 - ✅ /catalogo con filtros (Todo, Collares, Dijes, Aretes, Anillos, Pulseras)
