@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { api } from '../lib/api';
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 import { toast } from 'sonner';
 import { CheckCircle2 } from 'lucide-react';
+
+const PAYPAL_BUTTON_STYLE = { layout: 'vertical', color: 'gold', shape: 'rect' };
 
 const Checkout = () => {
   const { items, subtotal, clear } = useCart();
@@ -19,6 +21,12 @@ const Checkout = () => {
   useEffect(() => {
     api.get('/paypal/config').then((r) => setPaypalCfg(r.data)).catch(() => setPaypalCfg({ enabled: false }));
   }, []);
+
+  const paypalOptions = useMemo(
+    () => ({ clientId: paypalCfg?.client_id || '', currency: 'USD' }),
+    [paypalCfg?.client_id]
+  );
+  const paypalButtonStyle = PAYPAL_BUTTON_STYLE;
 
   if (success) {
     return (
@@ -107,9 +115,9 @@ const Checkout = () => {
             </div>
 
             {paypalCfg?.enabled ? (
-              <PayPalScriptProvider options={{ clientId: paypalCfg.client_id, currency: 'USD' }}>
+              <PayPalScriptProvider options={paypalOptions}>
                 <PayPalButtons
-                  style={{ layout: 'vertical', color: 'gold', shape: 'rect' }}
+                  style={paypalButtonStyle}
                   createOrder={async () => {
                     const created = order || await createOrder();
                     if (!created) throw new Error('order_failed');

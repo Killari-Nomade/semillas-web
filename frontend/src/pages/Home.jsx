@@ -50,8 +50,8 @@ const Home = () => {
             { icon: Leaf, title: 'Naturaleza reutilizada', text: 'Hojas caídas, flores secas y maderas recuperadas de pino, olivo, ciprés y otras especies. Jamás de árboles vivos.' },
             { icon: Sparkles, title: 'Resina cristalina', text: 'Técnica artesanal que preserva la belleza efímera para siempre.' },
             { icon: Heart, title: 'Recogido con cariño', text: 'Cada elemento es seleccionado después de caer y trabajado a mano con respeto por su historia.' },
-          ].map((v, idx) => (
-            <div key={idx} className="flex gap-5">
+          ].map((v) => (
+            <div key={v.title} className="flex gap-5">
               <v.icon className="w-7 h-7 text-forest flex-shrink-0 mt-1" />
               <div>
                 <h3 className="font-serif text-2xl text-ink mb-2">{v.title}</h3>

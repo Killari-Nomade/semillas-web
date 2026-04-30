@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { api } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -20,7 +20,7 @@ const AdminDashboard = () => {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(empty);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     const [p, o, c, s] = await Promise.all([
       api.get('/products'),
       api.get('/orders'),
@@ -31,9 +31,9 @@ const AdminDashboard = () => {
     setOrders(o.data);
     setCustomOrders(c.data);
     setStats(s.data);
-  };
+  }, []);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [load]);
 
   const handleLogout = () => { logout(); nav('/admin/login'); };
 
@@ -403,8 +403,8 @@ const PhotoTipsDialog = ({ open, onClose }) => (
         </p>
 
         <div className="grid sm:grid-cols-2 gap-5">
-          {TIPS.map((t, i) => (
-            <div key={i} className="border border-line p-5">
+          {TIPS.map((t) => (
+            <div key={t.title} className="border border-line p-5">
               <div className="flex items-start gap-3 mb-2">
                 <t.icon className="w-5 h-5 text-forest flex-shrink-0 mt-0.5" />
                 <h4 className="font-serif text-lg text-ink leading-tight">{t.title}</h4>
@@ -417,8 +417,8 @@ const PhotoTipsDialog = ({ open, onClose }) => (
         <div>
           <p className="overline text-clay mb-3">Referencias visuales</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {INSPIRATION.map((img, i) => (
-              <div key={i} className="aspect-square overflow-hidden bg-line">
+            {INSPIRATION.map((img) => (
+              <div key={img.url} className="aspect-square overflow-hidden bg-line">
                 <img src={img.url} alt={img.alt} className="w-full h-full object-cover" loading="lazy" />
               </div>
             ))}

@@ -14,8 +14,8 @@ if not BASE_URL:
             break
 
 API = f"{BASE_URL}/api"
-ADMIN_EMAIL = "admin@semillasnomadas.com"
-ADMIN_PASSWORD = "admin123"
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@semillasnomadas.com')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123')
 
 
 @pytest.fixture(scope="module")
@@ -66,7 +66,7 @@ def test_filter_featured_true(session):
     r = session.get(f"{API}/products", params={"featured": "true"})
     assert r.status_code == 200
     data = r.json()
-    assert all(p["featured"] is True for p in data)
+    assert all(p["featured"] == True for p in data)  # noqa: E712
 
 
 def test_get_single_product(session):
@@ -194,7 +194,7 @@ def test_paypal_create_and_capture_demo(session, created_order, auth_headers):
     r = session.post(f"{API}/paypal/create-order/{oid}")
     assert r.status_code == 200, r.text
     j = r.json()
-    assert j.get("demo") is True
+    assert j.get("demo") == True  # noqa: E712
     assert j["id"].startswith("DEMO-")
     paypal_id = j["id"]
 

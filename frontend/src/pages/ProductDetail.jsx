@@ -53,8 +53,8 @@ const ProductDetail = () => {
               <div className="mb-8 border-t border-b border-line py-5">
                 <p className="overline text-muted2 mb-3 flex items-center gap-2"><Leaf className="w-3.5 h-3.5" /> Materiales</p>
                 <div className="flex flex-wrap gap-2">
-                  {product.materials.map((m, i) => (
-                    <span key={i} className="text-xs px-3 py-1.5 border border-line text-ink">{m}</span>
+                  {product.materials.map((m) => (
+                    <span key={m} className="text-xs px-3 py-1.5 border border-line text-ink">{m}</span>
                   ))}
                 </div>
               </div>
