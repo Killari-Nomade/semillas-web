@@ -1,0 +1,109 @@
+{
+  "theme": "light",
+  "archetype": "1 - Organic & Earthy",
+  "brand_name": "Semillas Nómadas",
+  "emotional_tone": "Warm, tactile, authentic, organic, bohemian yet elegant. Evokes the magic of nature preserved in resin.",
+  "typography": {
+    "primary_heading_font": "Cormorant Garamond",
+    "primary_body_font": "Outfit",
+    "rules": [
+      "Headings (H1, H2) MUST use Cormorant Garamond with tight letter spacing (tracking-tight).",
+      "Body text MUST use Outfit for high readability and modern contrast.",
+      "Overlines/Labels (like category tags) MUST be Uppercase, tiny (text-xs), wide spacing (tracking-[0.2em]), and use Outfit.",
+      "H1 size should not exceed text-6xl. Ensure responsive typography using sm: and md: prefixes.",
+      "No Inter or generic sans for headings."
+    ]
+  },
+  "colors": {
+    "background": "#F9F6F0",
+    "surface": "#FFFFFF",
+    "primary": "#2C402B",
+    "primary_hover": "#1E2D1E",
+    "secondary": "#8C593B",
+    "accent": "#D4A373",
+    "text_primary": "#1A1C1A",
+    "text_secondary": "#5C665A",
+    "border": "#E5E0D8",
+    "rules": [
+      "Use #F9F6F0 as the main app background to give a warm sand/paper feel.",
+      "Use #2C402B (Deep Forest Green) for primary CTAs and major headings.",
+      "Never use pure black #000000. Use #1A1C1A.",
+      "Hover states for buttons must explicitly declare text color (e.g., hover:bg-[#1E2D1E] hover:text-white).",
+      "For text over images, use a gradient overlay, never a flat blanket overlay. Max opacity 50%."
+    ]
+  },
+  "spacing_and_layout": {
+    "philosophy": "Generous spacing. Allow the natural elements to breathe. Use p-8 to p-16 for sections.",
+    "grid_system": "Bento Grid (Mode A) for the Story/About sections to create an editorial, asymmetric feel. Mix wide and tall images.",
+    "product_grid": "Clean, optical alignment. Large images (aspect-square or aspect-[4/5]).",
+    "container_padding": "Containers with borders must have internal padding (p-6 or p-8) to prevent text collision."
+  },
+  "surfaces_and_components": {
+    "buttons": "Flat design, rounded-none or rounded-sm. No heavy drop shadows. Primary color background, white text.",
+    "cards_and_products": "Cardless approach preferred. If using cards, use 1px solid border (border-border) with no shadow. Image zooms slightly on hover.",
+    "header": "Crystal Glassmorphism. bg-[#F9F6F0]/80, backdrop-blur-xl, border-b border-[#2C402B]/10. Must remain readable.",
+    "footer": "High contrast shift. Dark theme for footer: bg-[#2C402B] text-[#F9F6F0]. Generous vertical padding (py-20).",
+    "modals_drawers": "Use Shadcn Sheet for the Shopping Cart drawer. Use Dialog for Quick View if needed."
+  },
+  "navigation": {
+    "desktop": "Visible links (Inicio, Catálogo, Historia, Contacto). No hamburger on desktop. Cart icon with badge.",
+    "mobile": "Hamburger menu triggering a Shadcn Sheet or mobile full-screen overlay."
+  },
+  "ecommerce_flow": {
+    "catalog": "Filters for categories (Anillos, Aretes, Collares, Pulseras, Dijes). Sticky sidebar or top horizontal scroll for categories.",
+    "product_page": "Split layout: 50% sticky product info (right), 50% large scrollable images (left).",
+    "cart": "Drawer-based (Shadcn Sheet). Shows product thumbnail, name, qty adjust, and total.",
+    "checkout": "Mock PayPal integration button at the bottom of the cart drawer or dedicated checkout page.",
+    "admin_panel": "Swiss & High-Contrast (Archetype 4) strictly for functional admin clarity. White bg, dense tables (Shadcn Table) for products and orders."
+  },
+  "media": {
+    "hero_backgrounds": [
+      {
+        "url": "https://images.unsplash.com/photo-1773165896916-e13ff8e0f801?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzF8MHwxfHNlYXJjaHwxfHxhbWJlciUyMHJlc2luJTIwdGV4dHVyZXxlbnwwfHx8fDE3Nzc1ODUxOTR8MA&ixlib=rb-4.1.0&q=85",
+        "usage": "Main Hero Background. Apply a gradient overlay (bg-gradient-to-r from-[#2C402B]/80 to-transparent) to ensure the white/gold text is legible.",
+        "description": "A drop of golden resin on weathered wood"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1742559008386-16198f98e2b6?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MDV8MHwxfHNlYXJjaHw0fHxmb3Jlc3QlMjBuYXR1cmUlMjBtYWNybyUyMHRleHR1cmV8ZW58MHx8fHwxNzc3NTg1MTk0fDA&ixlib=rb-4.1.0&q=85",
+        "usage": "Storytelling section background or secondary banner.",
+        "description": "Textured bark of a tree, covered in moss."
+      }
+    ],
+    "product_examples": [
+      {
+        "url": "https://images.unsplash.com/photo-1610918122969-b6cbbc2bdc08?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwzfHxoYW5kbWFkZSUyMHJlc2luJTIwamV3ZWxyeSUyMGJvdGFuaWNhbHxlbnwwfHx8fDE3Nzc1ODUxODV8MA&ixlib=rb-4.1.0&q=85",
+        "usage": "Product Image - Dije / Collar",
+        "description": "Gold and silver round botanical pendant"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1630628123261-72dd7c75bc02?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwyfHxoYW5kbWFkZSUyMHJlc2luJTIwamV3ZWxyeSUyMGJvdGFuaWNhbHxlbnwwfHx8fDE3Nzc1ODUxODV8MA&ixlib=rb-4.1.0&q=85",
+        "usage": "Product Image - Dije",
+        "description": "Silver and purple botanical heart pendant"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1610819739861-bc4b791da150?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHw0fHxoYW5kbWFkZSUyMHJlc2luJTIwamV3ZWxyeSUyMGJvdGFuaWNhbHxlbnwwfHx8fDE3Nzc1ODUxODV8MA&ixlib=rb-4.1.0&q=85",
+        "usage": "Product Image - Collar",
+        "description": "Silver and black round botanical pendant"
+      }
+    ],
+    "storytelling_artisan": [
+      {
+        "url": "https://images.unsplash.com/photo-1759523131742-af817477bcd9?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODF8MHwxfHNlYXJjaHw0fHxhcnRpc2FuJTIwY3JhZnRpbmclMjBqZXdlbHJ5JTIwd29vZHxlbnwwfHx8fDE3Nzc1ODUxODV8MA&ixlib=rb-4.1.0&q=85",
+        "usage": "About Us / Artisan Story section image. Shows the crafting process.",
+        "description": "Wood carving tools and shavings on a workbench"
+      }
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Install lucide-react for icons.",
+    "Use standard Tailwind classes, strictly follow the provided color hex codes in tailwind.config.js.",
+    "Ensure all interactive elements have data-testid attributes (e.g., data-testid='add-to-cart-btn').",
+    "For the e-commerce state, use React Context or a lightweight state manager (Zustand) to manage the cart globally.",
+    "Admin routes should be protected. Mock the login with a simple hardcoded credential for demonstration.",
+    "Do NOT use placeholder text for images. Use the provided Unsplash URLs.",
+    "Prioritize optical alignment over geometric. Add slight padding to text next to icons to balance it visually.",
+    "Do not use Shadcn 'Card' wrapper for marketing sections; use raw HTML/Tailwind for bento grids to allow asymmetric overlapping.",
+    "Implement the shopping cart as a Shadcn Sheet (Drawer) opening from the right side.",
+    "Add a floating WhatsApp button fixed to the bottom-right corner."
+  ]
+}
