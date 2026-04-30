@@ -1,52 +1,74 @@
-import { useEffect } from "react";
 import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import React from 'react';
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { Toaster } from 'sonner';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+import { CartProvider } from './context/CartContext';
+import { AuthProvider } from './context/AuthContext';
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
+import Header from './components/Header';
+import Footer from './components/Footer';
+import CartSheet from './components/CartSheet';
+import WhatsAppFloat from './components/WhatsAppFloat';
+import AdminProtected from './components/AdminProtected';
 
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
+import Home from './pages/Home';
+import Catalog from './pages/Catalog';
+import ProductDetail from './pages/ProductDetail';
+import Story from './pages/Story';
+import Contact from './pages/Contact';
+import Checkout from './pages/Checkout';
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
+
+const StorefrontLayout = ({ children }) => (
+  <>
+    <Header />
+    {children}
+    <Footer />
+    <CartSheet />
+    <WhatsAppFloat />
+  </>
+);
+
+const AppRoutes = () => {
+  const { pathname } = useLocation();
+  const isAdmin = pathname.startsWith('/admin');
+
+  if (isAdmin) {
+    return (
+      <Routes>
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin" element={<AdminProtected><AdminDashboard /></AdminProtected>} />
+      </Routes>
+    );
+  }
 
   return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
+    <StorefrontLayout>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/catalogo" element={<Catalog />} />
+        <Route path="/producto/:id" element={<ProductDetail />} />
+        <Route path="/historia" element={<Story />} />
+        <Route path="/contacto" element={<Contact />} />
+        <Route path="/checkout" element={<Checkout />} />
+      </Routes>
+    </StorefrontLayout>
   );
 };
 
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <CartProvider>
+          <BrowserRouter>
+            <AppRoutes />
+            <Toaster position="bottom-center" richColors />
+          </BrowserRouter>
+        </CartProvider>
+      </AuthProvider>
     </div>
   );
 }
