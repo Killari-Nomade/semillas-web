@@ -92,6 +92,38 @@ class OrderCreate(BaseModel):
     notes: Optional[str] = ''
 
 
+class CustomOrderCreate(BaseModel):
+    customer_name: str
+    customer_email: EmailStr
+    customer_phone: Optional[str] = ''
+    jewelry_type: str  # collar, dije, anillo, aretes, pulsera, otro
+    element_description: str  # qué elemento natural quieren preservar
+    inspiration_url: Optional[str] = ''  # foto referencia
+    budget: str  # rango: '50-80', '80-120', '120-200', '200+'
+    deadline: Optional[str] = ''
+    notes: Optional[str] = ''
+
+
+class CustomOrder(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    customer_name: str
+    customer_email: str
+    customer_phone: str = ''
+    jewelry_type: str
+    element_description: str
+    inspiration_url: str = ''
+    budget: str
+    deadline: str = ''
+    notes: str = ''
+    status: str = 'nuevo'  # nuevo, contactado, cotizado, en_proceso, completado, cancelado
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+
+class StatusUpdate(BaseModel):
+    status: str
+
+
 class Order(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -246,6 +278,29 @@ async def get_order(order_id: str):
     return o
 
 
+# ----- CUSTOM ORDERS -----
+@api_router.post("/custom-orders", response_model=CustomOrder)
+async def create_custom_order(payload: CustomOrderCreate):
+    co = CustomOrder(**payload.model_dump())
+    await db.custom_orders.insert_one(co.model_dump())
+    return co
+
+
+@api_router.get("/custom-orders", response_model=List[CustomOrder])
+async def list_custom_orders(admin=Depends(require_admin)):
+    items = await db.custom_orders.find({}, {'_id': 0}).sort('created_at', -1).to_list(500)
+    return items
+
+
+@api_router.patch("/custom-orders/{co_id}", response_model=CustomOrder)
+async def update_custom_order_status(co_id: str, payload: StatusUpdate, admin=Depends(require_admin)):
+    await db.custom_orders.update_one({'id': co_id}, {'$set': {'status': payload.status}})
+    co = await db.custom_orders.find_one({'id': co_id}, {'_id': 0})
+    if not co:
+        raise HTTPException(status_code=404, detail='Solicitud no encontrada')
+    return co
+
+
 # ----- PAYPAL -----
 async def paypal_token() -> Optional[str]:
     if not (PAYPAL_CLIENT_ID and PAYPAL_SECRET):
@@ -339,11 +394,15 @@ async def admin_stats(admin=Depends(require_admin)):
     orders_count = await db.orders.count_documents({})
     paid_orders = await db.orders.find({'status': 'paid'}, {'_id': 0, 'subtotal': 1}).to_list(1000)
     revenue = sum(o.get('subtotal', 0) for o in paid_orders)
+    custom_count = await db.custom_orders.count_documents({})
+    custom_new = await db.custom_orders.count_documents({'status': 'nuevo'})
     return {
         'products': products_count,
         'orders': orders_count,
         'paid_orders': len(paid_orders),
         'revenue': round(revenue, 2),
+        'custom_orders': custom_count,
+        'custom_new': custom_new,
     }
 
 
@@ -405,12 +464,12 @@ SAMPLE_PRODUCTS = [
         'name': 'Anillo Bosque Eterno',
         'slug': 'anillo-bosque-eterno',
         'category': 'anillos',
-        'description': 'Anillo con miniatura de bosque preservado. Una ventana a la naturaleza en tu mano.',
+        'description': 'Anillo con miniatura de bosque preservado en resina, sobre una base de madera de pino recuperada. Una ventana a la naturaleza en tu mano.',
         'price': 26.00,
         'images': [
             'https://images.unsplash.com/photo-1535632787350-4e68ef0ac584?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200',
         ],
-        'materials': ['Resina', 'Madera reciclada', 'Acero inoxidable'],
+        'materials': ['Resina', 'Madera de pino recuperada', 'Acero inoxidable'],
         'stock': 7,
         'featured': True,
     },
@@ -444,12 +503,12 @@ SAMPLE_PRODUCTS = [
         'name': 'Aretes Corteza',
         'slug': 'aretes-corteza',
         'category': 'aretes',
-        'description': 'Aretes con corteza real de árboles caídos, recuperada y preservada en resina.',
+        'description': 'Aretes con madera recuperada de olivos que ya habían caído, preservada en resina. Cada par es único.',
         'price': 25.00,
         'images': [
             'https://images.unsplash.com/photo-1602173574767-37ac01994b2a?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200',
         ],
-        'materials': ['Madera reciclada', 'Resina', 'Plata 925'],
+        'materials': ['Madera de olivo recuperada', 'Resina', 'Plata 925'],
         'stock': 11,
         'featured': False,
     },

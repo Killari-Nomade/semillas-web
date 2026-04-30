@@ -41,12 +41,15 @@ const Story = () => (
           <p className="overline text-clay mb-3">Sustentabilidad</p>
           <h2 className="font-serif text-4xl text-forest mb-4 leading-tight">Naturaleza reciclada, no extraída</h2>
           <p className="text-muted2 leading-relaxed mb-4">
-            Sólo trabajamos con materiales que la naturaleza ya nos entregó: hojas caídas, flores secas, cortezas desprendidas, semillas dispersadas. Nunca cortamos ni dañamos plantas vivas.
+            Sólo trabajamos con materiales que la naturaleza ya nos entregó: hojas caídas, flores secas, semillas dispersadas y maderas recuperadas de pino, olivo, ciprés, nogal y otras especies. Cada trozo de madera ya tenía su propia historia cuando lo encontramos — nunca cortamos árboles vivos.
+          </p>
+          <p className="text-muted2 leading-relaxed mb-4">
+            Recogemos con cuidado lo que el tiempo y el viento nos dejan, y lo trabajamos con cariño en nuestro taller.
           </p>
           <ul className="space-y-2 text-sm text-muted2 list-disc pl-5">
-            <li>Materiales 100% recolectados de manera consciente</li>
-            <li>Empaque biodegradable y reciclado</li>
-            <li>Producción en pequeños lotes, sin desperdicio</li>
+            <li>Maderas reutilizadas de pino, olivo, ciprés, nogal y más — jamás cortadas</li>
+            <li>Hojas, flores y semillas recogidas después de caer</li>
+            <li>Empaque biodegradable y producción en pequeños lotes sin desperdicio</li>
           </ul>
         </div>
         <div className="md:col-span-7">

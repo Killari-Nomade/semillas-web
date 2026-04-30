@@ -47,9 +47,9 @@ const Home = () => {
       <section className="py-20 border-b border-line">
         <div className="max-w-7xl mx-auto px-6 lg:px-10 grid md:grid-cols-3 gap-12">
           {[
-            { icon: Leaf, title: 'Naturaleza reciclada', text: 'Hojas, flores, semillas y maderas recolectadas con consciencia.' },
+            { icon: Leaf, title: 'Naturaleza reutilizada', text: 'Hojas caídas, flores secas y maderas recuperadas de pino, olivo, ciprés y otras especies. Jamás de árboles vivos.' },
             { icon: Sparkles, title: 'Resina cristalina', text: 'Técnica artesanal que preserva la belleza efímera para siempre.' },
-            { icon: Heart, title: 'Pieza única', text: 'Ningún elemento natural se repite. Cada joya es irrepetible.' },
+            { icon: Heart, title: 'Recogido con cariño', text: 'Cada elemento es seleccionado después de caer y trabajado a mano con respeto por su historia.' },
           ].map((v, idx) => (
             <div key={idx} className="flex gap-5">
               <v.icon className="w-7 h-7 text-forest flex-shrink-0 mt-1" />
@@ -59,6 +59,28 @@ const Home = () => {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* MATERIALS PHILOSOPHY */}
+      <section className="py-20 bg-white border-b border-line">
+        <div className="max-w-6xl mx-auto px-6 lg:px-10 grid md:grid-cols-12 gap-10 items-center">
+          <div className="md:col-span-5">
+            <p className="overline text-clay mb-4">Nuestros materiales</p>
+            <h2 className="font-serif text-4xl lg:text-5xl text-forest tracking-tight leading-[1.05]">
+              Madera que <em className="not-italic text-clay">ya tiene historia</em>.
+            </h2>
+          </div>
+          <div className="md:col-span-7">
+            <p className="text-base text-muted2 leading-relaxed mb-5">
+              Trabajamos con maderas recuperadas de árboles que ya habían caído: <strong className="text-forest font-medium">pino, olivo, ciprés, nogal</strong> y otras especies. Jamás cortamos árboles vivos. Cada trozo llegó a nuestras manos después de décadas de vida, y nosotras lo trabajamos con cariño, respetando su veta, su color y su memoria.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {['Pino', 'Olivo', 'Ciprés', 'Nogal', 'Otras recuperadas'].map((w) => (
+                <span key={w} className="text-xs px-4 py-2 border border-forest/30 text-forest tracking-wider uppercase">{w}</span>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -80,6 +102,26 @@ const Home = () => {
         </div>
       </section>
 
+      {/* CUSTOM ORDER PREMIUM CTA */}
+      <section className="relative py-24 grain overflow-hidden bg-forest">
+        <div className="absolute inset-0 opacity-25">
+          <img src="https://images.unsplash.com/photo-1535556116002-6281ff3e9f36?crop=entropy&cs=srgb&fm=jpg&q=85&w=1800" alt="" className="w-full h-full object-cover" />
+        </div>
+        <div className="relative max-w-5xl mx-auto px-6 lg:px-10 text-center text-sand">
+          <p className="overline text-amber mb-5">Atelier privado</p>
+          <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.05] mb-6">
+            Tu naturaleza,<br/>
+            <em className="not-italic text-amber">eterna en resina</em>.
+          </h2>
+          <p className="text-base sm:text-lg text-sand/80 max-w-2xl mx-auto leading-relaxed mb-8">
+            Envíanos tu propio elemento natural — una flor de tu jardín, una semilla de un viaje, una hoja con historia — y lo transformamos en una pieza única, hecha sólo para ti.
+          </p>
+          <Link to="/personalizada" className="btn-primary bg-amber text-ink hover:bg-sand hover:text-forest" data-testid="home-custom-cta">
+            Solicitar pieza personalizada <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </section>
+
       {/* STORY TEASER (Bento) */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-10 grid md:grid-cols-12 gap-8 items-center">
@@ -95,7 +137,7 @@ const Home = () => {
               <em className="not-italic text-clay">la naturaleza permanece</em>.
             </h2>
             <p className="text-base text-muted2 leading-relaxed mb-8">
-              En cada gota de resina capturamos un instante: una hoja del otoño pasado, una flor recogida en una caminata, una corteza que el viento dejó en nuestro camino. Materiales recolectados con respeto, transformados en joyas que cuentan tu historia.
+              En cada gota de resina capturamos un instante: una hoja del otoño pasado, una flor recogida en una caminata, maderas recuperadas de pino, olivo o ciprés que ya habían caído. Ningún árbol vivo es tocado — cada elemento tiene ya su propia historia cuando llega a nuestras manos, y nosotras lo trabajamos con cariño.
             </p>
             <Link to="/historia" className="btn-outline" data-testid="story-cta">Conocer la historia</Link>
           </div>

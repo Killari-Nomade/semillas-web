@@ -1,0 +1,34 @@
+{
+  "summary": "Iter 2 — Custom Orders module end-to-end. Backend: 24/24 pytest pass (7 new tests covering POST/GET/PATCH /api/custom-orders, auth enforcement, validation, stats integration). Frontend: /personalizada hero + form submit + success page OK, home-custom-cta navigates correctly, nav-personalizada visible, Home materials section with wood chips (Pino/Olivo/Ciprés/Nogal) visible, Admin dashboard shows 3 tabs (Productos/Órdenes/Personalizadas), Personalizadas stat card shows count + new count, tab Personalizadas lists submitted requests and custom-status dropdown persists status change (cotizado verified). No regressions; PayPal demo flow still green via backend test.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Catálogo (ProductCard images)", "issues": ["Several seeded Unsplash images don't match their product descriptions: 'Aretes Corteza' (olivo) shows a gold chain bracelet; 'Pulsera Semillas Viajeras' shows rhinestones; 'Anillo Bosque Eterno' image doesn't show a ring with wood/forest. Recommend curating images that actually depict resin-with-nature pieces on wood, or replace with owned photography. Iter 1 noted same concern — still unresolved."]},
+      {"screen": "Global (from iter 1, still not fixed)", "issues": ["<title> in /app/frontend/public/index.html still 'Emergent | Fullstack App' — should be 'Semillas Nómadas'", "Radix Dialog a11y warnings (missing DialogDescription/aria-describedby) still printed on console"]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/backend_test.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "(Content) Replace seeded product images with ones that actually depict resin/nature jewelry — current Unsplash URLs are generic jewelry and mismatch descriptions.",
+    "(Cosmetic, carryover iter1) Update <title> in public/index.html to 'Semillas Nómadas'.",
+    "(Cosmetic, carryover iter1) Add DialogDescription / aria-describedby to Sheet + Dialog to remove Radix a11y warnings."
+  ],
+  "critical_code_review_comments": [
+    "backend/server.py growing (~555 lines). If more modules are added (inventory, blog, etc.), split into routers (products_router, orders_router, custom_orders_router, paypal_router, auth_router).",
+    "PATCH /api/custom-orders/{id} does not validate that `status` is one of the allowed values ['nuevo','contactado','cotizado','en_proceso','completado','cancelado']. Currently accepts any string. Low-risk (admin-only) but should use Enum / Literal.",
+    "No pagination on /api/custom-orders or /api/orders (hard-coded .to_list(500)). Fine for MVP; add skip/limit when data grows.",
+    "JWT_SECRET + ADMIN_PASSWORD still default in code (dev_secret / admin123) — should be required env vars in production deploy.",
+    "POST /api/custom-orders is fully public with no rate-limit/captcha — could be spammed. Consider honeypot or basic throttling.",
+    "WhatsApp number in CustomOrder.jsx success page is hardcoded '525555555555' placeholder — main agent should replace with real business number (or pull from env/config)."
+  ],
+  "updated_files": ["/app/backend/tests/backend_test.py"],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "test_credentials": "admin@semillasnomadas.com / admin123 (verified working)",
+  "seed_data_creation": "Tests created 1 custom order (TEST Custom Cliente / testcustom@example.com, later marked 'contactado') plus frontend E2E created 1 more custom order (TEST Frontend User, status changed to 'cotizado'). Iter 1 TEST_ product + demo-paid order still in DB.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend pytest suite has 24 tests — all green. Key testids for frontend: custom-submit, custom-success, custom-success-whatsapp, custom-name, custom-email, custom-element, custom-jewelry-type, custom-budget, custom-notes, home-custom-cta, admin-tab-custom, admin-tab-products, admin-tab-orders, custom-status-{id}, admin-custom-{id}. Admin: admin@semillasnomadas.com / admin123. PayPal stays in DEMO mode (DEMO- prefixed ids). Add-to-cart button lives on product detail page, not catalog grid — remember for regression.",
+  "rca of the issue": "No bugs surfaced. Outstanding non-blocking items are content/design (image-product mismatch, HTML title, a11y warnings) and defensive hardening (status enum validation, rate-limit on public custom-orders POST)."
+}

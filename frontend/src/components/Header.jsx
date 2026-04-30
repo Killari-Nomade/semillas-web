@@ -6,6 +6,7 @@ import { useCart } from '../context/CartContext';
 const links = [
   { to: '/', label: 'Inicio' },
   { to: '/catalogo', label: 'Catálogo' },
+  { to: '/personalizada', label: 'Personalizada' },
   { to: '/historia', label: 'Historia' },
   { to: '/contacto', label: 'Contacto' },
 ];

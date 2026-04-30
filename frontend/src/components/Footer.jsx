@@ -8,8 +8,7 @@ const Footer = () => (
       <div className="md:col-span-2">
         <h3 className="font-serif text-3xl tracking-tight mb-4">Semillas Nómadas</h3>
         <p className="text-sand/70 max-w-md leading-relaxed">
-          Joyería artesanal hecha con elementos de la naturaleza reciclados, preservados eternamente en resina.
-          Cada pieza, una historia. Cada historia, una semilla viajera.
+          Joyería artesanal hecha con elementos de la naturaleza reutilizados — hojas caídas, flores secas y maderas recuperadas de pino, olivo, ciprés — preservados eternamente en resina. Recogido con cuidado, trabajado con cariño.
         </p>
       </div>
       <div>

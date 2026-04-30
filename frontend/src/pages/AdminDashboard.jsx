@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Edit2, Trash2, LogOut, Package, ShoppingCart, DollarSign } from 'lucide-react';
+import { Plus, Edit2, Trash2, LogOut, Package, ShoppingCart, DollarSign, Sparkles } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { toast } from 'sonner';
 
@@ -14,18 +14,21 @@ const AdminDashboard = () => {
   const [tab, setTab] = useState('products');
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [customOrders, setCustomOrders] = useState([]);
   const [stats, setStats] = useState(null);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(empty);
 
   const load = async () => {
-    const [p, o, s] = await Promise.all([
+    const [p, o, c, s] = await Promise.all([
       api.get('/products'),
       api.get('/orders'),
+      api.get('/custom-orders'),
       api.get('/admin/stats'),
     ]);
     setProducts(p.data);
     setOrders(o.data);
+    setCustomOrders(c.data);
     setStats(s.data);
   };
 
@@ -90,24 +93,29 @@ const AdminDashboard = () => {
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Stats */}
         {stats && (
-          <div className="grid sm:grid-cols-3 gap-4 mb-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <Stat icon={Package} label="Productos" value={stats.products} />
             <Stat icon={ShoppingCart} label="Órdenes" value={stats.orders} sub={`${stats.paid_orders} pagadas`} />
             <Stat icon={DollarSign} label="Ingresos" value={`$${stats.revenue.toFixed(2)}`} sub="USD" />
+            <Stat icon={Sparkles} label="Personalizadas" value={stats.custom_orders ?? 0} sub={`${stats.custom_new ?? 0} nuevas`} />
           </div>
         )}
 
         {/* Tabs */}
         <div className="border-b border-line mb-6">
-          <div className="flex gap-1">
-            {['products', 'orders'].map((t) => (
+          <div className="flex gap-1 overflow-x-auto">
+            {[
+              ['products', 'Productos'],
+              ['orders', 'Órdenes'],
+              ['custom', 'Personalizadas'],
+            ].map(([t, l]) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
-                className={`px-5 py-3 text-sm border-b-2 ${tab === t ? 'border-forest text-forest font-medium' : 'border-transparent text-muted2'}`}
+                className={`px-5 py-3 text-sm border-b-2 whitespace-nowrap ${tab === t ? 'border-forest text-forest font-medium' : 'border-transparent text-muted2'}`}
                 data-testid={`admin-tab-${t}`}
               >
-                {t === 'products' ? 'Productos' : 'Órdenes'}
+                {l}
               </button>
             ))}
           </div>
@@ -177,6 +185,15 @@ const AdminDashboard = () => {
             </table>
           </div>
         )}
+
+        {tab === 'custom' && (
+          <div className="space-y-4">
+            {customOrders.length === 0 && <p className="px-4 py-12 text-center text-muted2 border border-line">Aún no hay solicitudes personalizadas.</p>}
+            {customOrders.map((co) => (
+              <CustomOrderCard key={co.id} co={co} onUpdated={load} />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Edit dialog */}
@@ -223,6 +240,46 @@ const Stat = ({ icon: Icon, label, value, sub }) => (
     {sub && <p className="text-xs text-muted2 mt-1">{sub}</p>}
   </div>
 );
+
+const STATUSES = ['nuevo', 'contactado', 'cotizado', 'en_proceso', 'completado', 'cancelado'];
+
+const CustomOrderCard = ({ co, onUpdated }) => {
+  const updateStatus = async (status) => {
+    await api.patch(`/custom-orders/${co.id}`, { status });
+    toast.success('Estado actualizado');
+    onUpdated();
+  };
+  return (
+    <div className="border border-line p-5 bg-white" data-testid={`admin-custom-${co.id}`}>
+      <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
+        <div>
+          <p className="font-serif text-xl text-forest leading-tight">{co.customer_name}</p>
+          <p className="text-xs text-muted2">{co.customer_email} {co.customer_phone && `· ${co.customer_phone}`}</p>
+        </div>
+        <select value={co.status} onChange={(e) => updateStatus(e.target.value)} className="border border-line px-3 py-1.5 text-xs bg-white" data-testid={`custom-status-${co.id}`}>
+          {STATUSES.map((s) => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
+        </select>
+      </div>
+      <div className="grid sm:grid-cols-3 gap-4 text-sm mb-3">
+        <div><span className="overline text-muted2 block mb-1">Tipo</span>{co.jewelry_type}</div>
+        <div><span className="overline text-muted2 block mb-1">Presupuesto</span>${co.budget} USD</div>
+        <div><span className="overline text-muted2 block mb-1">Fecha deseada</span>{co.deadline || '—'}</div>
+      </div>
+      <div className="text-sm mb-2">
+        <span className="overline text-muted2 block mb-1">Elemento natural</span>
+        {co.element_description}
+      </div>
+      {co.inspiration_url && (
+        <div className="text-sm mb-2">
+          <span className="overline text-muted2 block mb-1">Inspiración</span>
+          <a href={co.inspiration_url} target="_blank" rel="noopener noreferrer" className="text-forest underline break-all">{co.inspiration_url}</a>
+        </div>
+      )}
+      {co.notes && <div className="text-sm mb-2"><span className="overline text-muted2 block mb-1">Notas</span>{co.notes}</div>}
+      <p className="text-xs text-muted2 mt-3">Recibido: {new Date(co.created_at).toLocaleString()}</p>
+    </div>
+  );
+};
 
 const Input = ({ label, value, onChange, type = 'text', testid, textarea }) => (
   <label className="block">

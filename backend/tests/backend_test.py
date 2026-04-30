@@ -212,6 +212,82 @@ def test_admin_stats(session, auth_headers):
     r = session.get(f"{API}/admin/stats", headers=auth_headers)
     assert r.status_code == 200
     j = r.json()
-    for k in ("products", "orders", "paid_orders", "revenue"):
-        assert k in j
+    for k in ("products", "orders", "paid_orders", "revenue", "custom_orders", "custom_new"):
+        assert k in j, f"Missing key in stats: {k}"
     assert j["products"] >= 8
+
+
+# ---------------- CUSTOM ORDERS ----------------
+@pytest.fixture(scope="module")
+def created_custom_order(session):
+    payload = {
+        "customer_name": "TEST Custom Cliente",
+        "customer_email": "testcustom@example.com",
+        "customer_phone": "5512345678",
+        "jewelry_type": "collar",
+        "element_description": "Una flor de lavanda de mi jardín",
+        "inspiration_url": "https://example.com/inspo.jpg",
+        "budget": "80-120",
+        "deadline": "marzo 2026",
+        "notes": "Prefiero cadena de plata",
+    }
+    r = session.post(f"{API}/custom-orders", json=payload)
+    assert r.status_code == 200, r.text
+    return r.json()
+
+
+def test_create_custom_order(created_custom_order):
+    co = created_custom_order
+    assert co["status"] == "nuevo"
+    assert co["customer_email"] == "testcustom@example.com"
+    assert co["jewelry_type"] == "collar"
+    assert co["budget"] == "80-120"
+    assert "id" in co and isinstance(co["id"], str)
+    assert co["element_description"] == "Una flor de lavanda de mi jardín"
+
+
+def test_list_custom_orders_admin(session, auth_headers, created_custom_order):
+    r = session.get(f"{API}/custom-orders", headers=auth_headers)
+    assert r.status_code == 200
+    lst = r.json()
+    assert isinstance(lst, list)
+    ids = [c["id"] for c in lst]
+    assert created_custom_order["id"] in ids
+
+
+def test_list_custom_orders_unauthorized(session):
+    r = session.get(f"{API}/custom-orders")
+    assert r.status_code == 401
+
+
+def test_update_custom_order_status(session, auth_headers, created_custom_order):
+    coid = created_custom_order["id"]
+    r = session.patch(f"{API}/custom-orders/{coid}", json={"status": "contactado"}, headers=auth_headers)
+    assert r.status_code == 200, r.text
+    assert r.json()["status"] == "contactado"
+
+    # persistence check via list
+    r2 = session.get(f"{API}/custom-orders", headers=auth_headers)
+    found = next((c for c in r2.json() if c["id"] == coid), None)
+    assert found is not None and found["status"] == "contactado"
+
+
+def test_update_custom_order_unauthorized(session, created_custom_order):
+    coid = created_custom_order["id"]
+    r = session.patch(f"{API}/custom-orders/{coid}", json={"status": "contactado"})
+    assert r.status_code == 401
+
+
+def test_create_custom_order_missing_required(session):
+    # missing element_description
+    r = session.post(f"{API}/custom-orders", json={
+        "customer_name": "X", "customer_email": "x@x.com",
+        "jewelry_type": "collar", "budget": "50-80",
+    })
+    assert r.status_code in (400, 422)
+
+
+def test_admin_stats_custom_reflects(session, auth_headers, created_custom_order):
+    r = session.get(f"{API}/admin/stats", headers=auth_headers)
+    j = r.json()
+    assert j["custom_orders"] >= 1

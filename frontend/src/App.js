@@ -20,6 +20,7 @@ import Contact from './pages/Contact';
 import Checkout from './pages/Checkout';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
+import CustomOrder from './pages/CustomOrder';
 
 const StorefrontLayout = ({ children }) => (
   <>
@@ -51,6 +52,7 @@ const AppRoutes = () => {
         <Route path="/catalogo" element={<Catalog />} />
         <Route path="/producto/:id" element={<ProductDetail />} />
         <Route path="/historia" element={<Story />} />
+        <Route path="/personalizada" element={<CustomOrder />} />
         <Route path="/contacto" element={<Contact />} />
         <Route path="/checkout" element={<Checkout />} />
       </Routes>
