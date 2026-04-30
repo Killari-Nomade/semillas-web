@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { api } from '../lib/api';
 import { toast } from 'sonner';
 import { CheckCircle2, Sparkles, Leaf, Heart, MessageCircle } from 'lucide-react';
+import { waLink } from '../config';
 
 const HERO_IMG = 'https://images.unsplash.com/photo-1759523131742-af817477bcd9?crop=entropy&cs=srgb&fm=jpg&q=85&w=1800';
 
@@ -57,7 +58,7 @@ const CustomOrder = () => {
             Recibimos tu solicitud. Te contactaremos a <strong>{form.customer_email}</strong> en menos de 48 horas con bocetos, cotización personalizada e instrucciones para enviarnos el elemento natural (si aplica).
           </p>
           <a
-            href={`https://wa.me/525555555555?text=${encodeURIComponent(`Hola, acabo de enviar una solicitud personalizada a nombre de ${form.customer_name}`)}`}
+            href={waLink(`Hola, acabo de enviar una solicitud personalizada a nombre de ${form.customer_name}`)}
             target="_blank"
             rel="noopener noreferrer"
             className="btn-primary"

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Instagram, Mail, Phone } from 'lucide-react';
+import { WHATSAPP_NUMBER, CONTACT_EMAIL } from '../config';
 
 const Footer = () => (
   <footer className="bg-forest text-sand py-20 mt-24 grain" data-testid="site-footer">
@@ -15,6 +16,7 @@ const Footer = () => (
         <p className="overline text-amber mb-4">Explorar</p>
         <ul className="space-y-2 text-sm text-sand/80">
           <li><Link to="/catalogo" className="hover:text-amber transition-colors">Catálogo</Link></li>
+          <li><Link to="/personalizada" className="hover:text-amber transition-colors">Pieza personalizada</Link></li>
           <li><Link to="/historia" className="hover:text-amber transition-colors">Nuestra historia</Link></li>
           <li><Link to="/contacto" className="hover:text-amber transition-colors">Contacto</Link></li>
           <li><Link to="/admin/login" className="hover:text-amber transition-colors">Admin</Link></li>
@@ -23,15 +25,14 @@ const Footer = () => (
       <div>
         <p className="overline text-amber mb-4">Contacto</p>
         <ul className="space-y-3 text-sm text-sand/80">
-          <li className="flex items-center gap-2"><Mail className="w-4 h-4" /> hola@semillasnomadas.com</li>
-          <li className="flex items-center gap-2"><Phone className="w-4 h-4" /> +52 555 555 5555</li>
-          <li className="flex items-center gap-2"><Instagram className="w-4 h-4" /> @semillas.nomadas</li>
+          <li className="flex items-center gap-2"><Mail className="w-4 h-4" /> {CONTACT_EMAIL}</li>
+          <li className="flex items-center gap-2"><Phone className="w-4 h-4" /> +{WHATSAPP_NUMBER}</li>
         </ul>
       </div>
     </div>
     <div className="max-w-7xl mx-auto px-6 lg:px-10 mt-16 pt-8 border-t border-sand/10 flex flex-col md:flex-row justify-between gap-4 text-xs text-sand/50">
       <span>© {new Date().getFullYear()} Semillas Nómadas — Hecho a mano con amor.</span>
-      <span>Resina · Naturaleza reciclada · Una pieza, una historia.</span>
+      <span>Resina · Naturaleza reutilizada · Una pieza, una historia.</span>
     </div>
   </footer>
 );
