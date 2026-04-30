@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { CheckCircle2, Sparkles, Leaf, Heart, MessageCircle } from 'lucide-react';
 import { waLink } from '../config';
 
-const HERO_IMG = 'https://images.unsplash.com/photo-1759523131742-af817477bcd9?crop=entropy&cs=srgb&fm=jpg&q=85&w=1800';
+const HERO_IMG = 'https://images.unsplash.com/photo-1773165896916-e13ff8e0f801?crop=entropy&cs=srgb&fm=jpg&q=85&w=1800';
 
 const JEWELRY_TYPES = [
   { v: 'collar', l: 'Collar' },

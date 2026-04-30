@@ -36,7 +36,7 @@ const Contact = () => (
           <div>
             <p className="overline text-clay mb-2">Taller</p>
             <p className="font-serif text-2xl text-forest flex items-center gap-3">
-              <MapPin className="w-5 h-5" /> Bajo cita previa
+              <MapPin className="w-5 h-5" /> Alemania · bajo cita previa
             </p>
           </div>
         </div>
