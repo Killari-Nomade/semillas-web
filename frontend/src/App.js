@@ -49,7 +49,7 @@ const AppRoutes = () => {
     <StorefrontLayout>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/catalogo" element={<Catalog />} />
+        <Route path="/creaciones" element={<Catalog />} />
         <Route path="/producto/:id" element={<ProductDetail />} />
         <Route path="/historia" element={<Story />} />
         <Route path="/personalizada" element={<CustomOrder />} />

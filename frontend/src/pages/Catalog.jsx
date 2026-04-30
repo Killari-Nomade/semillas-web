@@ -9,6 +9,9 @@ const CATEGORIES = [
   { key: 'aretes', label: 'Aretes' },
   { key: 'anillos', label: 'Anillos' },
   { key: 'pulseras', label: 'Pulseras' },
+  { key: 'llaveros', label: 'Llaveros' },
+  { key: 'colgantes-celular', label: 'Colgantes para celular' },
+  { key: 'motivos', label: 'Motivos para pegar' },
 ];
 
 const Catalog = () => {
@@ -28,12 +31,12 @@ const Catalog = () => {
     <main className="py-16 md:py-20" data-testid="catalog-page">
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         <div className="mb-12 max-w-2xl">
-          <p className="overline text-clay mb-3">Catálogo completo</p>
+          <p className="overline text-clay mb-3">Nuestras creaciones</p>
           <h1 className="font-serif text-5xl md:text-6xl text-forest tracking-tight mb-4">
-            Joyas con <em className="not-italic text-clay">alma de bosque</em>
+            Joyas y piezas con <em className="not-italic text-clay">alma de bosque</em>
           </h1>
           <p className="text-muted2 leading-relaxed">
-            Cada pieza es única e irrepetible. Elige la tuya.
+            Joyería, llaveros, colgantes de celular y motivos decorativos. Cada pieza es única e irrepetible.
           </p>
         </div>
 

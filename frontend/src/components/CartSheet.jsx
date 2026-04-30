@@ -26,8 +26,8 @@ const CartSheet = () => {
             <div className="text-center py-20">
               <p className="font-serif text-xl text-muted2 mb-2">Tu canasta está vacía</p>
               <p className="text-sm text-muted2 mb-6">Descubre nuestras piezas únicas</p>
-              <Link to="/catalogo" onClick={() => setOpen(false)} className="btn-outline" data-testid="empty-cart-go-catalog">
-                Ver catálogo
+              <Link to="/creaciones" onClick={() => setOpen(false)} className="btn-outline" data-testid="empty-cart-go-catalog">
+                Ver creaciones
               </Link>
             </div>
           ) : (

@@ -210,7 +210,7 @@ const AdminDashboard = () => {
               <label className="block">
                 <span className="overline text-muted2 mb-1 block">Categoría</span>
                 <select className="w-full border border-line px-3 py-2.5 text-sm bg-white" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} data-testid="form-category">
-                  {['collares', 'dijes', 'aretes', 'anillos', 'pulseras'].map((c) => <option key={c}>{c}</option>)}
+                  {['collares', 'dijes', 'aretes', 'anillos', 'pulseras', 'llaveros', 'colgantes-celular', 'motivos'].map((c) => <option key={c}>{c}</option>)}
                 </select>
               </label>
               <Input label="Precio (USD)" type="number" value={form.price} onChange={(v) => setForm({ ...form, price: v })} testid="form-price" />

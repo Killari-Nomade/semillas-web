@@ -62,8 +62,8 @@ const Story = () => (
       <div className="max-w-3xl mx-auto px-6 text-center">
         <h2 className="font-serif text-4xl md:text-5xl mb-6 leading-tight">Una pieza, una historia que viaja contigo.</h2>
         <p className="text-sand/80 mb-8 leading-relaxed">Descubre la colección y elige la semilla que se quedará en tu camino.</p>
-        <Link to="/catalogo" className="btn-primary bg-amber text-ink hover:bg-sand hover:text-forest" data-testid="story-cta-catalog">
-          Ver colección
+        <Link to="/creaciones" className="btn-primary bg-amber text-ink hover:bg-sand hover:text-forest" data-testid="story-cta-catalog">
+          Ver creaciones
         </Link>
       </div>
     </section>

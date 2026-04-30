@@ -4,6 +4,8 @@ import { api } from '../lib/api';
 import { useCart } from '../context/CartContext';
 import { ArrowLeft, ShoppingBag, Leaf } from 'lucide-react';
 
+const JEWELRY_CATS = ['collares', 'dijes', 'aretes', 'anillos', 'pulseras'];
+
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -15,15 +17,15 @@ const ProductDetail = () => {
   }, [id]);
 
   if (product === false) {
-    return <main className="py-32 text-center"><p className="text-muted2">Producto no encontrado</p><Link to="/catalogo" className="btn-outline mt-6 inline-block">Volver</Link></main>;
+    return <main className="py-32 text-center"><p className="text-muted2">Producto no encontrado</p><Link to="/creaciones" className="btn-outline mt-6 inline-block">Volver</Link></main>;
   }
   if (!product) return <main className="py-32 text-center text-muted2">Cargando…</main>;
 
   return (
     <main className="py-12" data-testid="product-detail-page">
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
-        <Link to="/catalogo" className="inline-flex items-center gap-2 text-sm text-muted2 hover:text-forest mb-8" data-testid="back-to-catalog">
-          <ArrowLeft className="w-4 h-4" /> Volver al catálogo
+        <Link to="/creaciones" className="inline-flex items-center gap-2 text-sm text-muted2 hover:text-forest mb-8" data-testid="back-to-catalog">
+          <ArrowLeft className="w-4 h-4" /> Volver a creaciones
         </Link>
 
         <div className="grid md:grid-cols-2 gap-10 lg:gap-16">
@@ -38,6 +40,12 @@ const ProductDetail = () => {
           <div className="md:sticky md:top-28 self-start">
             <p className="overline text-clay mb-3">{product.category}</p>
             <h1 className="font-serif text-4xl sm:text-5xl text-forest tracking-tight mb-4 leading-[1.05]">{product.name}</h1>
+            {JEWELRY_CATS.includes(product.category) && product.stock > 0 && product.stock <= 3 && (
+              <p className="overline text-clay mb-4 flex items-center gap-2" data-testid="detail-low-stock">
+                <span className="inline-block w-1.5 h-1.5 bg-clay rounded-full animate-pulse"></span>
+                ¡Sólo quedan {product.stock} disponibles!
+              </p>
+            )}
             <p className="font-serif text-3xl text-ink mb-8" data-testid="product-price">${product.price.toFixed(2)} <span className="text-base text-muted2">USD</span></p>
             <p className="text-base text-muted2 leading-relaxed mb-8">{product.description}</p>
 

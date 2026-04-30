@@ -29,7 +29,7 @@ const Checkout = () => {
           <p className="text-muted2 mb-8">
             Hemos recibido tu pedido. Te contactaremos pronto al correo {form.customer_email} con los detalles del envío.
           </p>
-          <button onClick={() => navigate('/catalogo')} className="btn-outline" data-testid="success-back-catalog">Seguir explorando</button>
+          <button onClick={() => navigate('/creaciones')} className="btn-outline" data-testid="success-back-catalog">Seguir explorando</button>
         </div>
       </main>
     );
@@ -39,7 +39,7 @@ const Checkout = () => {
     return (
       <main className="py-32 text-center" data-testid="checkout-empty">
         <p className="text-muted2 mb-6">Tu canasta está vacía.</p>
-        <button onClick={() => navigate('/catalogo')} className="btn-outline">Ver catálogo</button>
+        <button onClick={() => navigate('/creaciones')} className="btn-outline">Ver creaciones</button>
       </main>
     );
   }

@@ -32,8 +32,8 @@ const Home = () => {
               Joyería única hecha a mano con elementos de la naturaleza reciclados, preservados eternamente en resina cristalina.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Link to="/catalogo" className="btn-primary bg-amber text-ink hover:bg-sand" data-testid="hero-cta-catalog">
-                Ver colección <ArrowRight className="w-4 h-4" />
+              <Link to="/creaciones" className="btn-primary bg-amber text-ink hover:bg-sand" data-testid="hero-cta-catalog">
+                Ver creaciones <ArrowRight className="w-4 h-4" />
               </Link>
               <Link to="/historia" className="btn-outline border-sand text-sand hover:bg-sand hover:text-forest" data-testid="hero-cta-story">
                 Nuestra historia
@@ -92,8 +92,8 @@ const Home = () => {
               <p className="overline text-clay mb-3">Selección curada</p>
               <h2 className="font-serif text-4xl sm:text-5xl text-forest tracking-tight">Piezas destacadas</h2>
             </div>
-            <Link to="/catalogo" className="text-sm text-forest underline underline-offset-4 hover:text-clay" data-testid="see-all-featured">
-              Ver todo el catálogo →
+            <Link to="/creaciones" className="text-sm text-forest underline underline-offset-4 hover:text-clay" data-testid="see-all-featured">
+              Ver todas las creaciones →
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">

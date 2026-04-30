@@ -15,7 +15,7 @@ const Footer = () => (
       <div>
         <p className="overline text-amber mb-4">Explorar</p>
         <ul className="space-y-2 text-sm text-sand/80">
-          <li><Link to="/catalogo" className="hover:text-amber transition-colors">Catálogo</Link></li>
+          <li><Link to="/creaciones" className="hover:text-amber transition-colors">Creaciones</Link></li>
           <li><Link to="/personalizada" className="hover:text-amber transition-colors">Pieza personalizada</Link></li>
           <li><Link to="/historia" className="hover:text-amber transition-colors">Nuestra historia</Link></li>
           <li><Link to="/contacto" className="hover:text-amber transition-colors">Contacto</Link></li>

@@ -12,6 +12,9 @@ const JEWELRY_TYPES = [
   { v: 'anillo', l: 'Anillo' },
   { v: 'aretes', l: 'Aretes' },
   { v: 'pulsera', l: 'Pulsera' },
+  { v: 'llavero', l: 'Llavero' },
+  { v: 'colgante-celular', l: 'Colgante para celular' },
+  { v: 'motivo', l: 'Motivo para pegar' },
   { v: 'otro', l: 'Otro' },
 ];
 
