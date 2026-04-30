@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { api } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Edit2, Trash2, LogOut, Package, ShoppingCart, DollarSign, Sparkles, Upload } from 'lucide-react';
+import { Plus, Edit2, Trash2, LogOut, Package, ShoppingCart, DollarSign, Sparkles, Upload, HelpCircle, Sun, Square, Focus, Eye } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { toast } from 'sonner';
 import { BACKEND_URL } from '../lib/api';
@@ -299,6 +299,7 @@ const Input = ({ label, value, onChange, type = 'text', testid, textarea }) => (
 const ImageField = ({ value, onChange }) => {
   const fileRef = useRef(null);
   const [uploading, setUploading] = useState(false);
+  const [tipsOpen, setTipsOpen] = useState(false);
 
   const handleFile = async (e) => {
     const file = e.target.files?.[0];
@@ -325,7 +326,17 @@ const ImageField = ({ value, onChange }) => {
 
   return (
     <div>
-      <span className="overline text-muted2 mb-1 block">Imagen del producto</span>
+      <div className="flex items-center justify-between mb-1">
+        <span className="overline text-muted2">Imagen del producto</span>
+        <button
+          type="button"
+          onClick={() => setTipsOpen(true)}
+          className="text-xs text-clay hover:text-forest flex items-center gap-1"
+          data-testid="photo-tips-btn"
+        >
+          <HelpCircle className="w-3.5 h-3.5" /> Tips de fotografía
+        </button>
+      </div>
       <div className="flex gap-3 items-start">
         <div className="w-24 h-24 bg-line flex-shrink-0 overflow-hidden border border-line">
           {value ? <img src={value} alt="preview" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-muted2 text-xs">sin foto</div>}
@@ -360,8 +371,78 @@ const ImageField = ({ value, onChange }) => {
         </div>
       </div>
       <p className="text-[11px] text-muted2 mt-1">Formatos: JPG, PNG, WebP, GIF · Máx 10 MB</p>
+      <PhotoTipsDialog open={tipsOpen} onClose={() => setTipsOpen(false)} />
     </div>
   );
 };
+
+const TIPS = [
+  { icon: Sun, title: 'Luz natural', text: 'Fotografía junto a una ventana en un día nublado. La luz suave resalta el brillo de la resina sin reflejos duros.' },
+  { icon: Square, title: 'Fondo neutro', text: 'Usa un fondo simple y texturado: madera clara, lino, piedra, papel kraft. Evita fondos con estampado que distraigan.' },
+  { icon: Focus, title: 'Enfoque al detalle', text: 'Acércate lo suficiente para que se vean los elementos dentro de la resina. La joya debe llenar al menos el 60% del encuadre.' },
+  { icon: Eye, title: 'Dos ángulos mínimo', text: 'Una foto general (toda la pieza) + una de detalle (zoom al elemento natural). Si puedes, añade una "de uso" (en la mano o cuello).' },
+];
+
+const INSPIRATION = [
+  { url: 'https://images.unsplash.com/photo-1610918122969-b6cbbc2bdc08?crop=entropy&cs=srgb&fm=jpg&q=85&w=600', alt: 'Detalle botánico con fondo limpio' },
+  { url: 'https://images.unsplash.com/photo-1630628123261-72dd7c75bc02?crop=entropy&cs=srgb&fm=jpg&q=85&w=600', alt: 'Resina con flor, luz lateral' },
+  { url: 'https://images.unsplash.com/photo-1610819739861-bc4b791da150?crop=entropy&cs=srgb&fm=jpg&q=85&w=600', alt: 'Colgante con musgo, enfoque cercano' },
+  { url: 'https://images.unsplash.com/photo-1773165896916-e13ff8e0f801?crop=entropy&cs=srgb&fm=jpg&q=85&w=600', alt: 'Resina dorada sobre madera' },
+];
+
+const PhotoTipsDialog = ({ open, onClose }) => (
+  <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+    <DialogContent className="max-w-3xl bg-white max-h-[90vh] overflow-y-auto" data-testid="photo-tips-dialog">
+      <DialogHeader>
+        <p className="overline text-clay">Guía rápida</p>
+        <DialogTitle className="font-serif text-3xl text-forest leading-tight">Cómo fotografiar tus piezas</DialogTitle>
+      </DialogHeader>
+      <div className="mt-6 space-y-8">
+        <p className="text-sm text-muted2 leading-relaxed">
+          No hace falta equipo profesional — tu móvil es suficiente. Estos principios marcan la diferencia entre una foto común y una que enamora a la primera vista:
+        </p>
+
+        <div className="grid sm:grid-cols-2 gap-5">
+          {TIPS.map((t, i) => (
+            <div key={i} className="border border-line p-5">
+              <div className="flex items-start gap-3 mb-2">
+                <t.icon className="w-5 h-5 text-forest flex-shrink-0 mt-0.5" />
+                <h4 className="font-serif text-lg text-ink leading-tight">{t.title}</h4>
+              </div>
+              <p className="text-sm text-muted2 leading-relaxed">{t.text}</p>
+            </div>
+          ))}
+        </div>
+
+        <div>
+          <p className="overline text-clay mb-3">Referencias visuales</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {INSPIRATION.map((img, i) => (
+              <div key={i} className="aspect-square overflow-hidden bg-line">
+                <img src={img.url} alt={img.alt} className="w-full h-full object-cover" loading="lazy" />
+              </div>
+            ))}
+          </div>
+          <p className="text-[11px] text-muted2 mt-2">Observa: fondos limpios, luz suave, el elemento natural siempre visible y en foco.</p>
+        </div>
+
+        <div className="bg-sand border border-line p-5">
+          <p className="overline text-clay mb-2">Checklist antes de subir</p>
+          <ul className="text-sm text-muted2 space-y-1 list-disc pl-5">
+            <li>¿La foto está enfocada al detalle del elemento natural?</li>
+            <li>¿El fondo es neutro y no distrae?</li>
+            <li>¿La luz es natural (no flash, no fluorescente)?</li>
+            <li>¿La imagen está recortada vertical u horizontal — no cuadrada con mucho espacio vacío?</li>
+            <li>¿El color de la resina se ve fiel a como es en realidad?</li>
+          </ul>
+        </div>
+
+        <div className="flex justify-end pt-2">
+          <button type="button" onClick={onClose} className="btn-primary" data-testid="photo-tips-close">Entendido</button>
+        </div>
+      </div>
+    </DialogContent>
+  </Dialog>
+);
 
 export default AdminDashboard;
