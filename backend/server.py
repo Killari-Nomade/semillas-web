@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, status
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, UploadFile, File, Response, Header, Query
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -13,6 +13,7 @@ import uuid
 import bcrypt
 import jwt
 import httpx
+import requests
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -29,6 +30,67 @@ PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID', '')
 PAYPAL_SECRET = os.environ.get('PAYPAL_SECRET', '')
 PAYPAL_ENV = os.environ.get('PAYPAL_ENV', 'sandbox')
 PAYPAL_BASE = 'https://api-m.sandbox.paypal.com' if PAYPAL_ENV == 'sandbox' else 'https://api-m.paypal.com'
+
+# ----- Object Storage -----
+STORAGE_URL = "https://integrations.emergentagent.com/objstore/api/v1/storage"
+EMERGENT_KEY = os.environ.get('EMERGENT_LLM_KEY', '')
+APP_NAME = 'semillas-nomadas'
+storage_key: Optional[str] = None
+
+
+def init_storage() -> Optional[str]:
+    global storage_key
+    if storage_key:
+        return storage_key
+    if not EMERGENT_KEY:
+        return None
+    try:
+        r = requests.post(f"{STORAGE_URL}/init", json={"emergent_key": EMERGENT_KEY}, timeout=30)
+        r.raise_for_status()
+        storage_key = r.json()["storage_key"]
+        return storage_key
+    except Exception as e:
+        logging.error(f'Storage init failed: {e}')
+        return None
+
+
+def put_object(path: str, data: bytes, content_type: str) -> dict:
+    key = init_storage()
+    if not key:
+        raise HTTPException(status_code=500, detail='Storage no disponible')
+    r = requests.put(
+        f"{STORAGE_URL}/objects/{path}",
+        headers={"X-Storage-Key": key, "Content-Type": content_type},
+        data=data, timeout=120,
+    )
+    if r.status_code == 403:
+        # refresh key
+        globals()['storage_key'] = None
+        key = init_storage()
+        r = requests.put(
+            f"{STORAGE_URL}/objects/{path}",
+            headers={"X-Storage-Key": key, "Content-Type": content_type},
+            data=data, timeout=120,
+        )
+    r.raise_for_status()
+    return r.json()
+
+
+def get_object(path: str):
+    key = init_storage()
+    r = requests.get(
+        f"{STORAGE_URL}/objects/{path}",
+        headers={"X-Storage-Key": key}, timeout=60,
+    )
+    if r.status_code == 403:
+        globals()['storage_key'] = None
+        key = init_storage()
+        r = requests.get(
+            f"{STORAGE_URL}/objects/{path}",
+            headers={"X-Storage-Key": key}, timeout=60,
+        )
+    r.raise_for_status()
+    return r.content, r.headers.get("Content-Type", "application/octet-stream")
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -406,6 +468,48 @@ async def admin_stats(admin=Depends(require_admin)):
     }
 
 
+# ----- UPLOADS -----
+ALLOWED_IMG_EXTS = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
+MIME_TYPES = {
+    'jpg': 'image/jpeg', 'jpeg': 'image/jpeg', 'png': 'image/png',
+    'gif': 'image/gif', 'webp': 'image/webp',
+}
+
+
+@api_router.post("/upload")
+async def upload_image(file: UploadFile = File(...), admin=Depends(require_admin)):
+    filename = file.filename or 'upload.jpg'
+    ext = filename.split('.')[-1].lower() if '.' in filename else 'jpg'
+    if ext not in ALLOWED_IMG_EXTS:
+        raise HTTPException(status_code=400, detail='Formato no permitido (usa jpg/png/webp/gif)')
+    data = await file.read()
+    if len(data) > 10 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail='Archivo supera 10 MB')
+    file_id = uuid.uuid4().hex
+    path = f"{APP_NAME}/products/{file_id}.{ext}"
+    content_type = MIME_TYPES.get(ext, file.content_type or 'application/octet-stream')
+    put_object(path, data, content_type)
+    await db.files.insert_one({
+        'id': file_id,
+        'storage_path': path,
+        'original_filename': filename,
+        'content_type': content_type,
+        'size': len(data),
+        'is_deleted': False,
+        'created_at': datetime.now(timezone.utc).isoformat(),
+    })
+    return {'url': f'/api/files/{path}', 'path': path}
+
+
+@api_router.get("/files/{path:path}")
+async def download_file(path: str):
+    record = await db.files.find_one({'storage_path': path, 'is_deleted': False}, {'_id': 0})
+    if not record:
+        raise HTTPException(status_code=404, detail='Archivo no encontrado')
+    data, content_type = get_object(path)
+    return Response(content=data, media_type=record.get('content_type', content_type))
+
+
 # ============= SEED DATA =============
 SAMPLE_PRODUCTS = [
     {
@@ -517,6 +621,12 @@ SAMPLE_PRODUCTS = [
 
 @app.on_event("startup")
 async def seed_db():
+    # Init storage
+    try:
+        init_storage()
+        logger.info('Storage ready')
+    except Exception as e:
+        logger.warning(f'Storage not ready: {e}')
     # Seed admin
     existing = await db.admins.find_one({'email': ADMIN_EMAIL})
     if not existing:

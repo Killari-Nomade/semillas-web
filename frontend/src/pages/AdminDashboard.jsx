@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { api } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Edit2, Trash2, LogOut, Package, ShoppingCart, DollarSign, Sparkles } from 'lucide-react';
+import { Plus, Edit2, Trash2, LogOut, Package, ShoppingCart, DollarSign, Sparkles, Upload } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { toast } from 'sonner';
+import { BACKEND_URL } from '../lib/api';
 
 const empty = { name: '', slug: '', category: 'collares', description: '', price: 0, images: [''], materials: [''], stock: 10, featured: false };
 
@@ -216,7 +217,10 @@ const AdminDashboard = () => {
             </div>
             <Input label="Stock" type="number" value={form.stock} onChange={(v) => setForm({ ...form, stock: v })} testid="form-stock" />
             <Input label="Descripción" value={form.description} onChange={(v) => setForm({ ...form, description: v })} testid="form-description" textarea />
-            <Input label="Imagen URL" value={form.images[0] || ''} onChange={(v) => setForm({ ...form, images: [v] })} testid="form-image" />
+            <ImageField
+              value={form.images[0] || ''}
+              onChange={(url) => setForm({ ...form, images: [url] })}
+            />
             <Input label="Materiales (separados por coma)" value={form.materials.join(', ')} onChange={(v) => setForm({ ...form, materials: v.split(',').map(s => s.trim()) })} testid="form-materials" />
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" checked={form.featured} onChange={(e) => setForm({ ...form, featured: e.target.checked })} data-testid="form-featured" />
@@ -291,5 +295,73 @@ const Input = ({ label, value, onChange, type = 'text', testid, textarea }) => (
     )}
   </label>
 );
+
+const ImageField = ({ value, onChange }) => {
+  const fileRef = useRef(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleFile = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('La imagen supera 10 MB');
+      return;
+    }
+    setUploading(true);
+    try {
+      const data = new FormData();
+      data.append('file', file);
+      const r = await api.post('/upload', data, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const fullUrl = `${BACKEND_URL}${r.data.url}`;
+      onChange(fullUrl);
+      toast.success('Imagen subida');
+    } catch (e) {
+      toast.error(e.response?.data?.detail || 'Error al subir');
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = '';
+    }
+  };
+
+  return (
+    <div>
+      <span className="overline text-muted2 mb-1 block">Imagen del producto</span>
+      <div className="flex gap-3 items-start">
+        <div className="w-24 h-24 bg-line flex-shrink-0 overflow-hidden border border-line">
+          {value ? <img src={value} alt="preview" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-muted2 text-xs">sin foto</div>}
+        </div>
+        <div className="flex-1 space-y-2">
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFile}
+            className="hidden"
+            data-testid="form-image-file"
+          />
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            disabled={uploading}
+            className="btn-outline w-full justify-center text-xs py-2"
+            data-testid="form-image-upload"
+          >
+            <Upload className="w-3.5 h-3.5 inline mr-2" />
+            {uploading ? 'Subiendo…' : 'Subir desde tu equipo'}
+          </button>
+          <input
+            type="text"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="…o pega URL externa (Unsplash, etc.)"
+            className="w-full border border-line px-3 py-2 text-xs"
+            data-testid="form-image"
+          />
+        </div>
+      </div>
+      <p className="text-[11px] text-muted2 mt-1">Formatos: JPG, PNG, WebP, GIF · Máx 10 MB</p>
+    </div>
+  );
+};
 
 export default AdminDashboard;
