@@ -75,10 +75,7 @@ const Home = () => {
             </h2>
           </div>
           <div className="md:col-span-7">
-            <p
-              className="text-base text-muted2 leading-relaxed mb-5"
-              dangerouslySetInnerHTML={{ __html: t('home.materials.text') }}
-            />
+            <p className="text-base text-muted2 leading-relaxed mb-5">{t('home.materials.text')}</p>
             <div className="flex flex-wrap gap-2">
               {['Pino', 'Olivo', 'Ciprés', 'Nogal'].map((w) => (
                 <span key={w} className="text-xs px-4 py-2 border border-forest/30 text-forest tracking-wider uppercase">{w}</span>

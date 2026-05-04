@@ -48,10 +48,17 @@ const CustomOrder = () => {
         <div className="max-w-2xl mx-auto text-center px-6">
           <CheckCircle2 className="w-16 h-16 text-forest mx-auto mb-6" />
           <h1 className="font-serif text-4xl md:text-5xl text-forest mb-4 leading-tight">{t('customOrder.successH1')}</h1>
-          <p
-            className="text-muted2 leading-relaxed mb-8"
-            dangerouslySetInnerHTML={{ __html: t('customOrder.successText', { email: `<strong>${form.customer_email}</strong>` }) }}
-          />
+          {(() => {
+            const sentinel = '\u0000';
+            const parts = t('customOrder.successText', { email: sentinel }).split(sentinel);
+            return (
+              <p className="text-muted2 leading-relaxed mb-8">
+                {parts[0]}
+                <strong>{form.customer_email}</strong>
+                {parts[1]}
+              </p>
+            );
+          })()}
           <a
             href={waLink(t('customOrder.successCtaMsg', { name: form.customer_name }))}
             target="_blank"
