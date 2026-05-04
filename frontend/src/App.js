@@ -5,6 +5,7 @@ import { Toaster } from 'sonner';
 
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
+import { I18nProvider } from './i18n/I18nContext';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -63,14 +64,16 @@ const AppRoutes = () => {
 function App() {
   return (
     <div className="App">
-      <AuthProvider>
-        <CartProvider>
-          <BrowserRouter>
-            <AppRoutes />
-            <Toaster position="bottom-center" richColors />
-          </BrowserRouter>
-        </CartProvider>
-      </AuthProvider>
+      <I18nProvider>
+        <AuthProvider>
+          <CartProvider>
+            <BrowserRouter>
+              <AppRoutes />
+              <Toaster position="bottom-center" richColors />
+            </BrowserRouter>
+          </CartProvider>
+        </AuthProvider>
+      </I18nProvider>
     </div>
   );
 }

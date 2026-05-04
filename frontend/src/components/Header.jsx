@@ -2,18 +2,21 @@ import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { ShoppingBag, Menu, X } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-
-const links = [
-  { to: '/', label: 'Inicio' },
-  { to: '/historia', label: 'Historia' },
-  { to: '/creaciones', label: 'Creaciones' },
-  { to: '/personalizada', label: 'Personalizadas' },
-  { to: '/contacto', label: 'Contacto' },
-];
+import { useI18n } from '../i18n/I18nContext';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const Header = () => {
   const { count, setOpen } = useCart();
+  const { t } = useI18n();
   const [mobile, setMobile] = useState(false);
+
+  const links = [
+    { to: '/', label: t('nav.home') },
+    { to: '/historia', label: t('nav.story') },
+    { to: '/creaciones', label: t('nav.creations') },
+    { to: '/personalizada', label: t('nav.custom') },
+    { to: '/contacto', label: t('nav.contact') },
+  ];
 
   return (
     <header
@@ -23,16 +26,16 @@ const Header = () => {
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-5 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group" data-testid="brand-link">
-          <span className="font-serif text-2xl tracking-tight text-forest leading-none">Semillas</span>
-          <span className="overline text-clay">Nómadas</span>
+          <span className="font-serif text-2xl tracking-tight text-forest leading-none">{t('brand.name')}</span>
+          <span className="overline text-clay">{t('brand.tagline')}</span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-10">
+        <nav className="hidden md:flex items-center gap-8 lg:gap-10">
           {links.map((l) => (
             <NavLink
               key={l.to}
               to={l.to}
-              data-testid={`nav-${l.label.toLowerCase()}`}
+              data-testid={`nav-${l.to.replace(/\//g, '') || 'home'}`}
               className={({ isActive }) =>
                 `text-sm tracking-wide transition-colors ${isActive ? 'text-forest font-medium' : 'text-muted2 hover:text-forest'}`
               }
@@ -43,11 +46,12 @@ const Header = () => {
         </nav>
 
         <div className="flex items-center gap-3">
+          <LanguageSwitcher className="hidden sm:flex" />
           <button
             onClick={() => setOpen(true)}
             className="relative p-2 hover:bg-line transition-colors"
             data-testid="cart-trigger-btn"
-            aria-label="Carrito"
+            aria-label={t('nav.cartAria')}
           >
             <ShoppingBag className="w-5 h-5 text-forest" />
             {count > 0 && (
@@ -63,7 +67,7 @@ const Header = () => {
             className="md:hidden p-2"
             onClick={() => setMobile(!mobile)}
             data-testid="mobile-menu-btn"
-            aria-label="Menú"
+            aria-label={t('nav.menuAria')}
           >
             {mobile ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -79,11 +83,12 @@ const Header = () => {
                 to={l.to}
                 onClick={() => setMobile(false)}
                 className="text-sm tracking-wide text-forest"
-                data-testid={`mobile-nav-${l.label.toLowerCase()}`}
+                data-testid={`mobile-nav-${l.to.replace(/\//g, '') || 'home'}`}
               >
                 {l.label}
               </NavLink>
             ))}
+            <LanguageSwitcher className="sm:hidden pt-2 border-t border-line" />
           </nav>
         </div>
       )}

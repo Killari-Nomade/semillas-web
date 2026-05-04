@@ -3,9 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from './ui/sheet';
 import { useCart } from '../context/CartContext';
 import { Trash2, Plus, Minus } from 'lucide-react';
+import { useI18n } from '../i18n/I18nContext';
 
 const CartSheet = () => {
   const { items, open, setOpen, remove, updateQty, subtotal } = useCart();
+  const { t } = useI18n();
   const navigate = useNavigate();
 
   const goCheckout = () => {
@@ -13,21 +15,23 @@ const CartSheet = () => {
     navigate('/checkout');
   };
 
+  const pieceLabel = items.length === 1 ? t('cart.pieceSingular') : t('cart.piecePlural');
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent className="bg-sand border-l border-line flex flex-col w-full sm:max-w-md p-0" data-testid="cart-sheet">
         <SheetHeader className="px-6 pt-6 pb-4 border-b border-line">
-          <SheetTitle className="font-serif text-2xl text-forest">Tu canasta</SheetTitle>
-          <p className="overline text-muted2">{items.length} {items.length === 1 ? 'pieza' : 'piezas'}</p>
+          <SheetTitle className="font-serif text-2xl text-forest">{t('cart.title')}</SheetTitle>
+          <p className="overline text-muted2">{items.length} {pieceLabel}</p>
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto px-6 py-4">
           {items.length === 0 ? (
             <div className="text-center py-20">
-              <p className="font-serif text-xl text-muted2 mb-2">Tu canasta está vacía</p>
-              <p className="text-sm text-muted2 mb-6">Descubre nuestras piezas únicas</p>
+              <p className="font-serif text-xl text-muted2 mb-2">{t('cart.empty')}</p>
+              <p className="text-sm text-muted2 mb-6">{t('cart.emptyHint')}</p>
               <Link to="/creaciones" onClick={() => setOpen(false)} className="btn-outline" data-testid="empty-cart-go-catalog">
-                Ver creaciones
+                {t('cart.seeCatalog')}
               </Link>
             </div>
           ) : (
@@ -64,11 +68,11 @@ const CartSheet = () => {
         {items.length > 0 && (
           <div className="border-t border-line px-6 py-5 bg-white">
             <div className="flex justify-between mb-4">
-              <span className="overline text-muted2">Subtotal</span>
+              <span className="overline text-muted2">{t('cart.subtotal')}</span>
               <span className="font-serif text-2xl text-forest" data-testid="cart-subtotal">${subtotal.toFixed(2)}</span>
             </div>
             <button onClick={goCheckout} className="btn-primary w-full justify-center" data-testid="checkout-btn">
-              Ir a pagar
+              {t('cart.checkout')}
             </button>
           </div>
         )}

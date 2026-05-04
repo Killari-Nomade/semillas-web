@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../lib/api';
 import ProductCard from '../components/ProductCard';
+import { useI18n } from '../i18n/I18nContext';
 
-const CATEGORIES = [
-  { key: 'all', label: 'Todo' },
-  { key: 'collares', label: 'Collares' },
-  { key: 'dijes', label: 'Dijes' },
-  { key: 'aretes', label: 'Aretes' },
-  { key: 'anillos', label: 'Anillos' },
-  { key: 'pulseras', label: 'Pulseras' },
-  { key: 'llaveros', label: 'Llaveros' },
-  { key: 'colgantes-celular', label: 'Colgantes para celular' },
-  { key: 'motivos', label: 'Motivos para pegar' },
-];
+const CAT_KEYS = ['all', 'collares', 'dijes', 'aretes', 'anillos', 'pulseras', 'llaveros', 'colgantes-celular', 'motivos'];
 
 const Catalog = () => {
+  const { t } = useI18n();
   const [products, setProducts] = useState([]);
   const [cat, setCat] = useState('all');
   const [loading, setLoading] = useState(true);
@@ -31,37 +23,34 @@ const Catalog = () => {
     <main className="py-16 md:py-20" data-testid="catalog-page">
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         <div className="mb-12 max-w-2xl">
-          <p className="overline text-clay mb-3">Nuestras creaciones</p>
+          <p className="overline text-clay mb-3">{t('catalog.overline')}</p>
           <h1 className="font-serif text-5xl md:text-6xl text-forest tracking-tight mb-4">
-            Joyas y piezas con <em className="not-italic text-clay">alma de bosque</em>
+            {t('catalog.h1a')} <em className="not-italic text-clay">{t('catalog.h1b')}</em>
           </h1>
-          <p className="text-muted2 leading-relaxed">
-            Joyería, llaveros, colgantes de celular y motivos decorativos. Cada pieza es única e irrepetible.
-          </p>
+          <p className="text-muted2 leading-relaxed">{t('catalog.subtitle')}</p>
         </div>
 
-        {/* Category filter */}
         <div className="border-b border-line mb-12 overflow-x-auto">
           <div className="flex gap-2 pb-1 min-w-max">
-            {CATEGORIES.map((c) => (
+            {CAT_KEYS.map((k) => (
               <button
-                key={c.key}
-                onClick={() => setCat(c.key)}
-                data-testid={`filter-${c.key}`}
+                key={k}
+                onClick={() => setCat(k)}
+                data-testid={`filter-${k}`}
                 className={`px-5 py-3 text-sm tracking-wide transition-colors border-b-2 ${
-                  cat === c.key ? 'border-forest text-forest font-medium' : 'border-transparent text-muted2 hover:text-forest'
+                  cat === k ? 'border-forest text-forest font-medium' : 'border-transparent text-muted2 hover:text-forest'
                 }`}
               >
-                {c.label}
+                {t(`category.${k}`)}
               </button>
             ))}
           </div>
         </div>
 
         {loading ? (
-          <p className="text-center py-20 text-muted2">Cargando piezas…</p>
+          <p className="text-center py-20 text-muted2">{t('catalog.loading')}</p>
         ) : products.length === 0 ? (
-          <p className="text-center py-20 text-muted2">No hay piezas en esta categoría todavía.</p>
+          <p className="text-center py-20 text-muted2">{t('catalog.empty')}</p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-10">
             {products.map((p) => <ProductCard key={p.id} product={p} />)}

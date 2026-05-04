@@ -5,10 +5,12 @@ import { api } from '../lib/api';
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 import { toast } from 'sonner';
 import { CheckCircle2 } from 'lucide-react';
+import { useI18n } from '../i18n/I18nContext';
 
 const PAYPAL_BUTTON_STYLE = { layout: 'vertical', color: 'gold', shape: 'rect' };
 
 const Checkout = () => {
+  const { t } = useI18n();
   const { items, subtotal, clear } = useCart();
   const navigate = useNavigate();
   const [paypalCfg, setPaypalCfg] = useState(null);
@@ -26,18 +28,15 @@ const Checkout = () => {
     () => ({ clientId: paypalCfg?.client_id || '', currency: 'USD' }),
     [paypalCfg?.client_id]
   );
-  const paypalButtonStyle = PAYPAL_BUTTON_STYLE;
 
   if (success) {
     return (
       <main className="py-32" data-testid="checkout-success">
         <div className="max-w-xl mx-auto text-center px-6">
           <CheckCircle2 className="w-16 h-16 text-forest mx-auto mb-6" />
-          <h1 className="font-serif text-4xl text-forest mb-4">¡Pago confirmado!</h1>
-          <p className="text-muted2 mb-8">
-            Hemos recibido tu pedido. Te contactaremos pronto al correo {form.customer_email} con los detalles del envío.
-          </p>
-          <button onClick={() => navigate('/creaciones')} className="btn-outline" data-testid="success-back-catalog">Seguir explorando</button>
+          <h1 className="font-serif text-4xl text-forest mb-4">{t('checkout.successH1')}</h1>
+          <p className="text-muted2 mb-8">{t('checkout.successText', { email: form.customer_email })}</p>
+          <button onClick={() => navigate('/creaciones')} className="btn-outline" data-testid="success-back-catalog">{t('checkout.successBack')}</button>
         </div>
       </main>
     );
@@ -46,8 +45,8 @@ const Checkout = () => {
   if (items.length === 0 && !order) {
     return (
       <main className="py-32 text-center" data-testid="checkout-empty">
-        <p className="text-muted2 mb-6">Tu canasta está vacía.</p>
-        <button onClick={() => navigate('/creaciones')} className="btn-outline">Ver creaciones</button>
+        <p className="text-muted2 mb-6">{t('checkout.emptyCart')}</p>
+        <button onClick={() => navigate('/creaciones')} className="btn-outline">{t('cart.seeCatalog')}</button>
       </main>
     );
   }
@@ -56,15 +55,15 @@ const Checkout = () => {
 
   const createOrder = async () => {
     if (!form.customer_name || !form.customer_email || !form.shipping_address) {
-      toast.error('Completa nombre, email y dirección');
+      toast.error(t('checkout.toastFields'));
       return null;
     }
     try {
       const r = await api.post('/orders', { ...form, items });
       setOrder(r.data);
       return r.data;
-    } catch (e) {
-      toast.error('No se pudo crear la orden');
+    } catch {
+      toast.error(t('checkout.toastOrderFail'));
       return null;
     }
   };
@@ -77,8 +76,8 @@ const Checkout = () => {
       await api.post(`/paypal/capture/${created.id}`, { paypal_order_id: cr.data.id });
       clear();
       setSuccess(true);
-    } catch (e) {
-      toast.error('Error al procesar el pago');
+    } catch {
+      toast.error(t('checkout.toastPayFail'));
     }
   };
 
@@ -86,21 +85,21 @@ const Checkout = () => {
     <main className="py-12 md:py-20" data-testid="checkout-page">
       <div className="max-w-6xl mx-auto px-6 lg:px-10 grid md:grid-cols-5 gap-10">
         <div className="md:col-span-3">
-          <p className="overline text-clay mb-3">Finalizar compra</p>
-          <h1 className="font-serif text-4xl text-forest mb-8 tracking-tight">Detalles de envío</h1>
+          <p className="overline text-clay mb-3">{t('checkout.overline')}</p>
+          <h1 className="font-serif text-4xl text-forest mb-8 tracking-tight">{t('checkout.h1')}</h1>
 
           <div className="space-y-5">
-            <Field label="Nombre completo *" testid="checkout-name" value={form.customer_name} onChange={handleChange('customer_name')} />
-            <Field label="Email *" testid="checkout-email" type="email" value={form.customer_email} onChange={handleChange('customer_email')} />
-            <Field label="Teléfono" testid="checkout-phone" value={form.customer_phone} onChange={handleChange('customer_phone')} />
-            <Field label="Dirección de envío *" testid="checkout-address" value={form.shipping_address} onChange={handleChange('shipping_address')} textarea />
-            <Field label="Notas adicionales" testid="checkout-notes" value={form.notes} onChange={handleChange('notes')} textarea />
+            <Field label={t('checkout.nameLabel')} testid="checkout-name" value={form.customer_name} onChange={handleChange('customer_name')} />
+            <Field label={t('checkout.emailLabel')} testid="checkout-email" type="email" value={form.customer_email} onChange={handleChange('customer_email')} />
+            <Field label={t('checkout.phoneLabel')} testid="checkout-phone" value={form.customer_phone} onChange={handleChange('customer_phone')} />
+            <Field label={t('checkout.addressLabel')} testid="checkout-address" value={form.shipping_address} onChange={handleChange('shipping_address')} textarea />
+            <Field label={t('checkout.notesLabel')} testid="checkout-notes" value={form.notes} onChange={handleChange('notes')} textarea />
           </div>
         </div>
 
         <div className="md:col-span-2">
           <div className="bg-white border border-line p-6 md:p-8 sticky top-28">
-            <h2 className="font-serif text-2xl text-forest mb-5">Tu pedido</h2>
+            <h2 className="font-serif text-2xl text-forest mb-5">{t('checkout.summary')}</h2>
             <ul className="space-y-3 mb-5 max-h-72 overflow-auto">
               {items.map((i) => (
                 <li key={i.product_id} className="flex justify-between text-sm gap-3">
@@ -110,14 +109,14 @@ const Checkout = () => {
               ))}
             </ul>
             <div className="flex justify-between border-t border-line pt-4 mb-6">
-              <span className="overline text-muted2">Total</span>
+              <span className="overline text-muted2">{t('checkout.total')}</span>
               <span className="font-serif text-3xl text-forest" data-testid="checkout-total">${subtotal.toFixed(2)} USD</span>
             </div>
 
             {paypalCfg?.enabled ? (
               <PayPalScriptProvider options={paypalOptions}>
                 <PayPalButtons
-                  style={paypalButtonStyle}
+                  style={PAYPAL_BUTTON_STYLE}
                   createOrder={async () => {
                     const created = order || await createOrder();
                     if (!created) throw new Error('order_failed');
@@ -130,17 +129,15 @@ const Checkout = () => {
                     clear();
                     setSuccess(true);
                   }}
-                  onError={() => toast.error('Pago cancelado o falló')}
+                  onError={() => toast.error(t('checkout.toastPayCancel'))}
                 />
               </PayPalScriptProvider>
             ) : (
               <>
                 <button onClick={handleDemoPay} className="btn-primary w-full justify-center" data-testid="demo-pay-btn">
-                  Pagar (Modo Demo)
+                  {t('checkout.demoPay')}
                 </button>
-                <p className="text-[11px] text-muted2 mt-3 leading-relaxed">
-                  PayPal en modo demo. Configura PAYPAL_CLIENT_ID y PAYPAL_SECRET en el backend para activar pagos reales.
-                </p>
+                <p className="text-[11px] text-muted2 mt-3 leading-relaxed">{t('checkout.demoNote')}</p>
               </>
             )}
           </div>
@@ -154,21 +151,9 @@ const Field = ({ label, testid, value, onChange, type = 'text', textarea }) => (
   <label className="block">
     <span className="overline text-muted2 mb-2 block">{label}</span>
     {textarea ? (
-      <textarea
-        rows={3}
-        className="w-full bg-white border border-line px-4 py-3 text-sm focus:outline-none focus:border-forest"
-        value={value}
-        onChange={onChange}
-        data-testid={testid}
-      />
+      <textarea rows={3} className="w-full bg-white border border-line px-4 py-3 text-sm focus:outline-none focus:border-forest" value={value} onChange={onChange} data-testid={testid} />
     ) : (
-      <input
-        type={type}
-        className="w-full bg-white border border-line px-4 py-3 text-sm focus:outline-none focus:border-forest"
-        value={value}
-        onChange={onChange}
-        data-testid={testid}
-      />
+      <input type={type} className="w-full bg-white border border-line px-4 py-3 text-sm focus:outline-none focus:border-forest" value={value} onChange={onChange} data-testid={testid} />
     )}
   </label>
 );
