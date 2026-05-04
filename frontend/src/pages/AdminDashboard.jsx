@@ -198,44 +198,54 @@ const AdminDashboard = () => {
       </div>
 
       {/* Edit dialog */}
-      <Dialog open={!!editing} onOpenChange={(v) => !v && setEditing(null)}>
-        <DialogContent className="max-w-2xl bg-white max-h-[90vh] overflow-y-auto" data-testid="admin-product-dialog">
-          <DialogHeader>
-            <DialogTitle className="font-serif text-2xl text-forest">{editing === 'new' ? 'Nuevo producto' : 'Editar producto'}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 mt-4">
-            <Input label="Nombre" value={form.name} onChange={(v) => setForm({ ...form, name: v })} testid="form-name" />
-            <Input label="Slug" value={form.slug} onChange={(v) => setForm({ ...form, slug: v })} testid="form-slug" />
-            <div className="grid grid-cols-2 gap-3">
-              <label className="block">
-                <span className="overline text-muted2 mb-1 block">Categoría</span>
-                <select className="w-full border border-line px-3 py-2.5 text-sm bg-white" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} data-testid="form-category">
-                  {['collares', 'dijes', 'aretes', 'anillos', 'pulseras', 'llaveros', 'colgantes-celular', 'motivos'].map((c) => <option key={c}>{c}</option>)}
-                </select>
-              </label>
-              <Input label="Precio (USD)" type="number" value={form.price} onChange={(v) => setForm({ ...form, price: v })} testid="form-price" />
-            </div>
-            <Input label="Stock" type="number" value={form.stock} onChange={(v) => setForm({ ...form, stock: v })} testid="form-stock" />
-            <Input label="Descripción" value={form.description} onChange={(v) => setForm({ ...form, description: v })} testid="form-description" textarea />
-            <ImageField
-              value={form.images[0] || ''}
-              onChange={(url) => setForm({ ...form, images: [url] })}
-            />
-            <Input label="Materiales (separados por coma)" value={form.materials.join(', ')} onChange={(v) => setForm({ ...form, materials: v.split(',').map(s => s.trim()) })} testid="form-materials" />
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={form.featured} onChange={(e) => setForm({ ...form, featured: e.target.checked })} data-testid="form-featured" />
-              Destacado
-            </label>
-            <div className="flex gap-3 pt-4">
-              <button onClick={save} className="btn-primary" data-testid="form-save">Guardar</button>
-              <button onClick={() => setEditing(null)} className="btn-outline">Cancelar</button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ProductFormDialog
+        editing={editing}
+        setEditing={setEditing}
+        form={form}
+        setForm={setForm}
+        save={save}
+      />
     </main>
   );
 };
+
+const ProductFormDialog = ({ editing, setEditing, form, setForm, save }) => (
+  <Dialog open={!!editing} onOpenChange={(v) => !v && setEditing(null)}>
+    <DialogContent className="max-w-2xl bg-white max-h-[90vh] overflow-y-auto" data-testid="admin-product-dialog">
+      <DialogHeader>
+        <DialogTitle className="font-serif text-2xl text-forest">{editing === 'new' ? 'Nuevo producto' : 'Editar producto'}</DialogTitle>
+      </DialogHeader>
+      <div className="space-y-4 mt-4">
+        <Input label="Nombre" value={form.name} onChange={(v) => setForm({ ...form, name: v })} testid="form-name" />
+        <Input label="Slug" value={form.slug} onChange={(v) => setForm({ ...form, slug: v })} testid="form-slug" />
+        <div className="grid grid-cols-2 gap-3">
+          <label className="block">
+            <span className="overline text-muted2 mb-1 block">Categoría</span>
+            <select className="w-full border border-line px-3 py-2.5 text-sm bg-white" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} data-testid="form-category">
+              {['collares', 'dijes', 'aretes', 'anillos', 'pulseras', 'llaveros', 'colgantes-celular', 'motivos'].map((c) => <option key={c}>{c}</option>)}
+            </select>
+          </label>
+          <Input label="Precio (USD)" type="number" value={form.price} onChange={(v) => setForm({ ...form, price: v })} testid="form-price" />
+        </div>
+        <Input label="Stock" type="number" value={form.stock} onChange={(v) => setForm({ ...form, stock: v })} testid="form-stock" />
+        <Input label="Descripción" value={form.description} onChange={(v) => setForm({ ...form, description: v })} testid="form-description" textarea />
+        <ImageField
+          value={form.images[0] || ''}
+          onChange={(url) => setForm({ ...form, images: [url] })}
+        />
+        <Input label="Materiales (separados por coma)" value={form.materials.join(', ')} onChange={(v) => setForm({ ...form, materials: v.split(',').map(s => s.trim()) })} testid="form-materials" />
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={form.featured} onChange={(e) => setForm({ ...form, featured: e.target.checked })} data-testid="form-featured" />
+          Destacado
+        </label>
+        <div className="flex gap-3 pt-4">
+          <button onClick={save} className="btn-primary" data-testid="form-save">Guardar</button>
+          <button onClick={() => setEditing(null)} className="btn-outline">Cancelar</button>
+        </div>
+      </div>
+    </DialogContent>
+  </Dialog>
+);
 
 const Stat = ({ icon: Icon, label, value, sub }) => (
   <div className="border border-line p-5">
